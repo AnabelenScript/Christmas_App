@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.compose.rememberNavController
 import com.example.deseos_navideos.core.di.AppContainer
+import com.example.deseos_navideos.core.navigation.NavigationWrapper
 import com.example.deseos_navideos.features.login.domain.usecases.RegisterUseCase
 import com.example.deseos_navideos.features.login.domain.usecases.LoginUseCase
-import com.example.deseos_navideos.features.login.presentation.screens.LoginScreen
 import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthViewModel
 import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthViewModelFactory
-import com.example.deseos_navideos.ui.theme.Deseos_NavideñosTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -35,14 +35,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Scaffold(
-                modifier = Modifier.fillMaxSize
-                ()) { _ ->
-                LoginScreen(viewModel = authViewModel)
+                modifier = Modifier.fillMaxSize()
+            ) { innerPadding ->
+                NavigationWrapper(
+                    viewModel = authViewModel,
+                    modifier = Modifier.padding(innerPadding) )
             }
-
         }
     }
 }
-
-
-

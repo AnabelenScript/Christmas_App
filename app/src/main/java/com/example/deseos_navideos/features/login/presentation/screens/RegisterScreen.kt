@@ -1,61 +1,109 @@
 package com.example.deseos_navideos.features.login.presentation.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.deseos_navideos.R
+import com.example.deseos_navideos.features.login.presentation.components.AuthLink
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoButton
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoTextField
 import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthViewModel
 import com.example.deseos_navideos.features.login.presentation.screens.AuthUiState
+import androidx.compose.runtime.collectAsState
+import com.example.deseos_navideos.features.login.presentation.components.NavideñoModal
+
+
 
 @Composable
-fun RegisterScreen(viewModel: AuthViewModel) {
-    val uiState by viewModel.uiState.observeAsState(AuthUiState())
+fun RegisterScreen(
+    viewModel: AuthViewModel,
+    navController: NavController
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val username by viewModel.username.collectAsState()
+    val age by viewModel.age.collectAsState()
+    val country by viewModel.country.collectAsState()
+    val password by viewModel.password.collectAsState()
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Register", style = MaterialTheme.typography.titleLarge)
+    var showErrorModal by remember { mutableStateOf(false) }
 
-        NavideñoTextField(
-            value = viewModel.username,
-            onValueChange = { viewModel.username = it },
-            label = "Username"
+    if (uiState.errorMessage != null && showErrorModal) {
+        NavideñoModal(
+            title = "Error de registro",
+            message = uiState.errorMessage ?: "Error desconocido",
+            onConfirm = { showErrorModal = false },
+            onDismiss = { showErrorModal = false }
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.santa_icon),
+            contentDescription = "Santa Claus",
+            modifier = Modifier
+                .size(120.dp)
+                .clip(CircleShape)
         )
 
-        NavideñoTextField(
-            value = viewModel.age,
-            onValueChange = { viewModel.age = it },
-            label = "Age"
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Crea tu cuenta",
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            )
+        )
+        Text(
+            text = "Regístrate para enviar tus deseos a Santa",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.secondary
         )
 
-        NavideñoTextField(
-            value = viewModel.country,
-            onValueChange = { viewModel.country = it },
-            label = "Country"
-        )
+        Spacer(modifier = Modifier.height(32.dp))
 
-        NavideñoTextField(
-            value = viewModel.password,
-            onValueChange = { viewModel.password = it },
-            label = "Password"
-        )
+        NavideñoTextField(value = username, onValueChange = { viewModel.onUsernameChange(it) }, label = "Usuario")
+        Spacer(modifier = Modifier.height(16.dp))
+        NavideñoTextField(value = age, onValueChange = { viewModel.onAgeChange(it) }, label = "Edad")
+        Spacer(modifier = Modifier.height(16.dp))
+        NavideñoTextField(value = country, onValueChange = { viewModel.onCountryChange(it) }, label = "País")
+        Spacer(modifier = Modifier.height(16.dp))
+        NavideñoTextField(value = password, onValueChange = { viewModel.onPasswordChange(it) }, label = "Contraseña")
 
+        Spacer(modifier = Modifier.height(24.dp))
         NavideñoButton(
-            text = "Register",
-            onClick = { viewModel.register() },
+            text = "Registrarse",
+            onClick = {
+                viewModel.register()
+                showErrorModal = true
+            },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        when {
-            uiState.isLoading -> CircularProgressIndicator()
-            uiState.registeredUserId != null -> Text("Usuario registrado con ID: ${uiState.registeredUserId} 🎁")
-            uiState.errorMessage != null -> Text("Error: ${uiState.errorMessage}", color = MaterialTheme.colorScheme.error)
-        }
+        AuthLink(
+            normalText = "¿Ya tienes cuenta?",
+            linkText = "Inicia sesión aquí",
+            navigateTo = "login",
+            navController = navController
+        )
     }
 }
