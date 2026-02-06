@@ -8,6 +8,10 @@ import com.example.deseos_navideos.features.login.data.repositories.AuthReposito
 import android.content.Context
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import com.example.deseos_navideos.features.deseos.data.repositories.WishesRepositoryImpl
+import com.example.deseos_navideos.features.deseos.domain.repositories.WishesRepository
+import com.example.deseos_navideos.features.usuarios.data.repository.UsersRepositoryImpl
+import com.example.deseos_navideos.features.usuarios.domain.repositories.UsersRepository
 
 class AppContainer(context: Context) {
 
@@ -31,5 +35,13 @@ class AppContainer(context: Context) {
 
     val authRepository: AuthRepository by lazy {
         AuthRepositoryImpl(apiService)
+    }
+
+    val wishesRepository: WishesRepository by lazy {
+        WishesRepositoryImpl(apiService)
+    }
+
+    val usersRepository: UsersRepository by lazy {
+        UsersRepositoryImpl(apiService)
     }
 }
