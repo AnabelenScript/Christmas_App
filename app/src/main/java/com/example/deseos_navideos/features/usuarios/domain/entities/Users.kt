@@ -5,6 +5,6 @@ data class Users(
     val name: String,
     val age: Int,
     val country: String,
-    val good_kid: Boolean,
-    val is_santa: Boolean
+    val good_kid: Int,
+    val is_santa: Int
 )

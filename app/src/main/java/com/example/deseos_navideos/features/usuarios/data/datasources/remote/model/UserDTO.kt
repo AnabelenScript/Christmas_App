@@ -5,7 +5,7 @@ data class UserDTO(
     val username: String,
     val age: Int?,
     val country: String?,
-    val good_kid: Boolean,
-    val is_santa: Boolean,
+    val good_kid: Int,
+    val is_santa: Int,
     val password: String,
 )
