@@ -20,11 +20,8 @@ import com.example.deseos_navideos.features.login.presentation.components.AuthLi
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoButton
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoTextField
 import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthViewModel
-import com.example.deseos_navideos.features.login.presentation.screens.AuthUiState
 import androidx.compose.runtime.collectAsState
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoModal
-
-
 
 @Composable
 fun RegisterScreen(
@@ -94,6 +91,10 @@ fun RegisterScreen(
             onClick = {
                 viewModel.register()
                 showErrorModal = true
+
+                if (uiState.errorMessage == null) {
+                    navController.navigate("login")
+                }
             },
             modifier = Modifier.fillMaxWidth()
         )

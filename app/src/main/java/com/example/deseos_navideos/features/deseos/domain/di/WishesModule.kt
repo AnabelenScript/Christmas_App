@@ -1,37 +1,43 @@
 package com.example.deseos_navideos.features.deseos.domain.di
 
 import com.example.deseos_navideos.core.di.AppContainer
-import com.example.deseos_navideos.features.deseos.domain.usecases.CreateWish_UseCase
-import com.example.deseos_navideos.features.deseos.domain.usecases.DeleteWish_UseCase
-import com.example.deseos_navideos.features.deseos.domain.usecases.GetWishes_UseCase
-import com.example.deseos_navideos.features.deseos.domain.usecases.UpdateWishes_UseCase
+import com.example.deseos_navideos.core.storage.DataStorage
+import com.example.deseos_navideos.features.deseos.domain.usecases.CreateWishUseCase
+import com.example.deseos_navideos.features.deseos.domain.usecases.GetWishesUseCase
+import com.example.deseos_navideos.features.deseos.domain.usecases.UpdateWishesUseCase
+import com.example.deseos_navideos.features.deseos.domain.usecases.DeleteWishUseCase
 import com.example.deseos_navideos.features.deseos.presentation.viewmodel.WishesViewModelFactory
 
-class WishesModule (
+class WishesModule(
     private val appContainer: AppContainer,
 ) {
-    private fun provideCreateWish(): CreateWish_UseCase {
-        return CreateWish_UseCase(appContainer.wishesRepository)
+    private fun provideCreateWish(): CreateWishUseCase {
+        return CreateWishUseCase(appContainer.wishesRepository)
     }
 
-    private fun provideGetWishes(): GetWishes_UseCase {
-        return GetWishes_UseCase(appContainer.wishesRepository)
+    private fun provideGetWishes(): GetWishesUseCase {
+        return GetWishesUseCase(appContainer.wishesRepository)
     }
 
-    private fun provideUpdateWish(): UpdateWishes_UseCase {
-        return UpdateWishes_UseCase(appContainer.wishesRepository)
+    private fun provideUpdateWish(): UpdateWishesUseCase {
+        return UpdateWishesUseCase(appContainer.wishesRepository)
     }
 
-    private fun provideDeleteWish(): DeleteWish_UseCase {
-        return DeleteWish_UseCase(appContainer.wishesRepository)
+    private fun provideDeleteWish(): DeleteWishUseCase {
+        return DeleteWishUseCase(appContainer.wishesRepository)
+    }
+
+    private fun provideDataStorage(): DataStorage {
+        return appContainer.dataStorage
     }
 
     fun provideWishesViewModelFactory(): WishesViewModelFactory {
         return WishesViewModelFactory(
-            provideCreateWish(),
-            provideGetWishes(),
-            provideUpdateWish(),
-            provideDeleteWish(),
+            createWishUseCase = provideCreateWish(),
+            getWishesUseCase = provideGetWishes(),
+            updateWishesUseCase = provideUpdateWish(),
+            deleteWishUseCase = provideDeleteWish(),
+            dataStorage = provideDataStorage()
         )
     }
 }

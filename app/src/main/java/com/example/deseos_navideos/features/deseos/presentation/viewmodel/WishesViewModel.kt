@@ -2,10 +2,11 @@ package com.example.deseos_navideos.features.deseos.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.deseos_navideos.features.deseos.domain.usecases.CreateWish_UseCase
-import com.example.deseos_navideos.features.deseos.domain.usecases.DeleteWish_UseCase
-import com.example.deseos_navideos.features.deseos.domain.usecases.GetWishes_UseCase
-import com.example.deseos_navideos.features.deseos.domain.usecases.UpdateWishes_UseCase
+import com.example.deseos_navideos.core.storage.DataStorage
+import com.example.deseos_navideos.features.deseos.domain.usecases.CreateWishUseCase
+import com.example.deseos_navideos.features.deseos.domain.usecases.GetWishesUseCase
+import com.example.deseos_navideos.features.deseos.domain.usecases.UpdateWishesUseCase
+import com.example.deseos_navideos.features.deseos.domain.usecases.DeleteWishUseCase
 import com.example.deseos_navideos.features.deseos.presentation.screens.WishesUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,11 +14,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WishesViewModel(
-    private val createwishUsecase: CreateWish_UseCase,
-    private val getWishes: GetWishes_UseCase,
-    private val updateWIsh: UpdateWishes_UseCase,
-    private val deleteWish: DeleteWish_UseCase,
-): ViewModel() {
+    private val createWishUseCase: CreateWishUseCase,
+    private val getWishesUseCase: GetWishesUseCase,
+    private val updateWishesUseCase: UpdateWishesUseCase,
+    private val deleteWishUseCase: DeleteWishUseCase,
+    private val dataStorage: DataStorage
+) : ViewModel() {
+
     private val _uiState = MutableStateFlow(WishesUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -27,21 +30,29 @@ class WishesViewModel(
         loadWishes()
     }
 
-    val kid_id = 2
-    val user_id = 1
-    val role = "santa"
+    private fun getUserId(): Int {
+        val loginRes = dataStorage.getLoginResponse()
+        return loginRes?.user?.id ?: 0
+    }
 
-    fun loadWishes(){
+    private fun getRole(): String {
+        val loginRes = dataStorage.getLoginResponse()
+        return loginRes?.role ?: "guest"
+    }
+
+    fun loadWishes() {
         _uiState.update { it.copy(isLoading = true) }
-        val selected_id = if (role == "santa") kid_id else user_id
+        val selectedId = getUserId()
+        val role = getRole()
+
         viewModelScope.launch {
-            val r = getWishes(selected_id, role)
+            val result = getWishesUseCase(selectedId, role)
             _uiState.update { currentState ->
-                r.fold(
-                    onSuccess = {list ->
+                result.fold(
+                    onSuccess = { list ->
                         currentState.copy(isLoading = false, wishes = list)
                     },
-                    onFailure = {error ->
+                    onFailure = { error ->
                         currentState.copy(isLoading = false, errorMessage = error.message)
                     }
                 )
@@ -49,29 +60,53 @@ class WishesViewModel(
         }
     }
 
-    fun addWish(){
+    fun addWish() {
+        val role = getRole()
+        val userId = getUserId()
         if (role == "santa") return
-        if (newWish == "") return
+        if (newWish.isBlank()) return
+
         viewModelScope.launch {
-            createwishUsecase(newWish, user_id, role)
+            createWishUseCase(newWish, userId, role)
             loadWishes()
         }
     }
 
-    fun editWish(thing: String, id: Int){
+    fun editWish(description: String, id: Int) {
+        val role = getRole()
+        val userId = getUserId()
         if (role == "santa") return
-        if (thing == "") return
+        if (description.isBlank()) return
+
         viewModelScope.launch {
-            updateWIsh(id, thing, user_id, role)
+            updateWishesUseCase(id, description, userId, role)
             loadWishes()
         }
     }
 
-    fun removeWish(id: Int){
+    fun removeWish(id: Int) {
+        val role = getRole()
+        val userId = getUserId()
         if (role == "santa") return
+
         viewModelScope.launch {
-            deleteWish(id, user_id, role)
-            loadWishes()
+            try {
+                // Ejecuta el borrado en el backend
+                deleteWishUseCase(id, userId, role)
+
+                // Actualiza el estado local para reflejar la eliminación
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        wishes = currentState.wishes.filterNot { it.id == id },
+                        deletedWishId = id,
+                        errorMessage = null
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { currentState ->
+                    currentState.copy(errorMessage = e.message)
+                }
+            }
         }
     }
 }
