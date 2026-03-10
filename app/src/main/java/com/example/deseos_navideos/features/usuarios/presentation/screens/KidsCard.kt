@@ -29,7 +29,7 @@ fun KidsCard(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Text(kid.name, style = MaterialTheme.typography.titleMedium)
+                Text(kid.username, style = MaterialTheme.typography.titleMedium)
                 Text("${kid.age} años", style = MaterialTheme.typography.bodyMedium)
             }
             Column(horizontalAlignment = Alignment.End) {
