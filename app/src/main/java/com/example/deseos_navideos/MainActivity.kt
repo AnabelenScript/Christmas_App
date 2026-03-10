@@ -16,10 +16,10 @@ import com.example.deseos_navideos.features.deseos.presentation.viewmodel.Wishes
 import com.example.deseos_navideos.features.deseos.presentation.viewmodel.WishesViewModelFactory
 import com.example.deseos_navideos.features.login.domain.usecases.RegisterUseCase
 import com.example.deseos_navideos.features.login.domain.usecases.LoginUseCase
+import com.example.deseos_navideos.features.login.domain.usecases.LogoutUseCase
 import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthViewModel
 import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthViewModelFactory
 import com.example.deseos_navideos.features.usuarios.domain.usecases.GetKids_UseCase
-import com.example.deseos_navideos.features.usuarios.domain.usecases.UpdateGoodness_UseCase
 import com.example.deseos_navideos.features.usuarios.presentation.viewmodel.KidsViewModel
 
 class MainActivity : ComponentActivity() {
@@ -35,12 +35,14 @@ class MainActivity : ComponentActivity() {
 
         val registerUseCase = RegisterUseCase(appContainer.authRepository)
         val loginUseCase = LoginUseCase(appContainer.authRepository)
+        val logoutUseCase = LogoutUseCase(appContainer.authRepository)
+        
         val createWishUseCase = CreateWishUseCase(appContainer.wishesRepository)
         val getWishesUseCase = GetWishesUseCase(appContainer.wishesRepository)
         val updateWishesUseCase = UpdateWishesUseCase(appContainer.wishesRepository)
         val deleteWishUseCase = DeleteWishUseCase(appContainer.wishesRepository)
 
-        val authFactory = AuthViewModelFactory(loginUseCase, registerUseCase)
+        val authFactory = AuthViewModelFactory(loginUseCase, registerUseCase, logoutUseCase)
         authViewModel = ViewModelProvider(this, authFactory)[AuthViewModel::class.java]
 
         val wishesFactory = WishesViewModelFactory(
@@ -51,9 +53,9 @@ class MainActivity : ComponentActivity() {
             appContainer.dataStorage
         )
         wishesViewModel = ViewModelProvider(this, wishesFactory)[WishesViewModel::class.java]
+
         kidsViewModel = KidsViewModel(
             getKidsUseCase = GetKids_UseCase(appContainer.usersRepository),
-
             getWishesUseCase = getWishesUseCase,
             dataStorage = appContainer.dataStorage
         )

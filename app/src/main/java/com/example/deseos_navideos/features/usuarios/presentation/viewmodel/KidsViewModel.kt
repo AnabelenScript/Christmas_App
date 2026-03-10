@@ -28,7 +28,12 @@ class KidsViewModel(
 
     private fun getRole(): String {
         val loginRes = dataStorage.getLoginResponse()
-        return loginRes?.role ?: "guest"
+        return loginRes?.user?.role ?: "guest"
+    }
+
+    private fun getFamilyCode(): String {
+        val loginRes = dataStorage.getLoginResponse()
+        return loginRes?.user?.familyCode ?: ""
     }
 
     init {
@@ -38,11 +43,12 @@ class KidsViewModel(
     fun loadKids() {
         val role = getRole()
         val userId = getUserId()
+        val familyCode = getFamilyCode()
 
-        if (role != "santa") return
+        if (role != "parent") return
 
         viewModelScope.launch {
-            val result = getKidsUseCase(userId, role)
+            val result = getKidsUseCase(familyCode, userId, role)
             result.onSuccess { kidsList ->
                 _kids.value = kidsList
                 loadWishesForKids(kidsList, role)
@@ -58,7 +64,10 @@ class KidsViewModel(
         viewModelScope.launch {
             val wishesMap = mutableMapOf<Int, List<Wish>>()
             kidsList.forEach { kid ->
-                val result = getWishesUseCase(kid.id, role)
+                // For a parent viewing a kid's wishes, we might need the family code or the kid's ID
+                // The API GET /wishes/:code takes a code. If it's for a kid, it might be their family code.
+                // Assuming for now it needs a string identifier.
+                val result = getWishesUseCase(kid.id.toString(), kid.id, role)
                 result.onSuccess { wishes ->
                     wishesMap[kid.id] = wishes
                 }
@@ -70,4 +79,3 @@ class KidsViewModel(
         }
     }
 }
-

@@ -21,8 +21,12 @@ class AuthRepositoryImpl(
         return response.user.toDomain()
     }
 
-    override suspend fun register(username: String, age: Int, country: String, password: String): Int {
-        val response: RegisterRes = deseosApi.register(RegisterReq(username, age, country, password))
+    override suspend fun register(username: String, age: Int, country: String, password: String, role: String, familyCode: String?): Int {
+        val response: RegisterRes = deseosApi.register(RegisterReq(username, age, country, password, role, familyCode))
         return response.id
+    }
+
+    override fun logout() {
+        dataStorage.clearAll()
     }
 }

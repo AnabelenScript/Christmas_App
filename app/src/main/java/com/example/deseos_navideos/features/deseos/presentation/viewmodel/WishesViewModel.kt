@@ -37,16 +37,22 @@ class WishesViewModel(
 
     private fun getRole(): String {
         val loginRes = dataStorage.getLoginResponse()
-        return loginRes?.role ?: "guest"
+        return loginRes?.user?.role ?: "guest"
+    }
+
+    private fun getFamilyCode(): String {
+        val loginRes = dataStorage.getLoginResponse()
+        return loginRes?.user?.familyCode ?: ""
     }
 
     fun loadWishes() {
         _uiState.update { it.copy(isLoading = true) }
-        val selectedId = getUserId()
+        val userId = getUserId()
         val role = getRole()
+        val familyCode = getFamilyCode()
 
         viewModelScope.launch {
-            val result = getWishesUseCase(selectedId, role)
+            val result = getWishesUseCase(familyCode, userId, role)
             _uiState.update { currentState ->
                 result.fold(
                     onSuccess = { list ->

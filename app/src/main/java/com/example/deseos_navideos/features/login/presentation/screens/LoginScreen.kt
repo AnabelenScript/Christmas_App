@@ -24,16 +24,12 @@ import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthVie
 import androidx.compose.runtime.collectAsState
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoModal
 import com.example.deseos_navideos.core.storage.DataStorage
-import com.example.deseos_navideos.features.usuarios.domain.entities.Users
-
-
 
 @Composable
 fun LoginScreen(
     viewModel: AuthViewModel,
     navController: NavController,
     dataStorage: DataStorage,
-
 ) {
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()
@@ -100,33 +96,20 @@ fun LoginScreen(
             onClick = {
                 viewModel.login()
                 showErrorModal = true
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
 
-                val loginRes = dataStorage.getLoginResponse()
-                val role = loginRes?.role ?: "guest"
-
-                if (role == "santa") {
+        LaunchedEffect(uiState) {
+            if (!uiState.isLoading && uiState.errorMessage == null && uiState.user != null) {
+                val role = uiState.user?.role ?: "child"
+                if (role == "parent") {
                     navController.navigate("users")
-                } else if (role == "kid") {
+                } else if (role == "child") {
                     navController.navigate("wishes")
                 } else {
                     Log.d("LoginScreen", "Rol desconocido: $role")
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-        LaunchedEffect(uiState) {
-            var role: String? = ""
-            if (!uiState.isLoading && uiState.errorMessage == null && uiState.isSuccess) {
-                val loginRes = dataStorage.getLoginResponse()
-                role = loginRes?.role ?: "guest"
-            }
-
-            if (role == "santa") {
-                navController.navigate("kids")
-            } else if (role == "kid") {
-                navController.navigate("wishes")
-            } else {
-                Log.d("LoginScreen", "Rol desconocido: $role")
             }
         }
 

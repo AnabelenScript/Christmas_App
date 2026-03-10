@@ -8,9 +8,8 @@ fun UserDto.toDomain(): User {
         username = this.username,
         age = this.age,
         country = this.country,
-        goodKid = this.good_kid,
-        isSanta = this.is_santa,
-        password = this.password
+        password = this.password,
+        familyCode = this.familyCode,
+        role = this.role
     )
 }
-

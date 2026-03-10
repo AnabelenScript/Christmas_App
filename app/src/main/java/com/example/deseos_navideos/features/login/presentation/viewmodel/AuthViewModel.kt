@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.deseos_navideos.features.login.domain.usecases.LoginUseCase
 import com.example.deseos_navideos.features.login.domain.usecases.RegisterUseCase
+import com.example.deseos_navideos.features.login.domain.usecases.LogoutUseCase
 import com.example.deseos_navideos.features.login.presentation.screens.AuthUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +14,8 @@ import retrofit2.HttpException
 
 class AuthViewModel(
     private val loginUseCase: LoginUseCase,
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState
@@ -25,11 +27,17 @@ class AuthViewModel(
     val age: StateFlow<String> = _age
     private val _country = MutableStateFlow("")
     val country: StateFlow<String> = _country
+    private val _role = MutableStateFlow("child")
+    val role: StateFlow<String> = _role
+    private val _familyCode = MutableStateFlow("")
+    val familyCode: StateFlow<String> = _familyCode
 
     fun onUsernameChange(newValue: String) { _username.value = newValue }
     fun onPasswordChange(newValue: String) { _password.value = newValue }
     fun onAgeChange(newValue: String) { _age.value = newValue }
     fun onCountryChange(newValue: String) { _country.value = newValue }
+    fun onRoleChange(newValue: String) { _role.value = newValue }
+    fun onFamilyCodeChange(newValue: String) { _familyCode.value = newValue }
 
     fun login() {
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
@@ -65,7 +73,9 @@ class AuthViewModel(
                     _username.value,
                     _age.value.toIntOrNull() ?: 0,
                     _country.value,
-                    _password.value
+                    _password.value,
+                    _role.value,
+                    if (_role.value == "parent") null else _familyCode.value
                 )
                 _uiState.value = _uiState.value.copy(isLoading = false, registeredUserId = id)
             } catch (e: HttpException) {
@@ -80,6 +90,11 @@ class AuthViewModel(
                 _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = e.message)
             }
         }
+    }
+
+    fun logout() {
+        logoutUseCase()
+        _uiState.value = AuthUiState()
     }
 
     fun clearError() {

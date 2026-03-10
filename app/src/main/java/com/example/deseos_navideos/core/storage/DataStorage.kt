@@ -25,4 +25,8 @@ class DataStorage(context: Context) {
     fun clearLoginResponse() {
         prefs.edit().remove("login_response").apply()
     }
+
+    fun clearAll() {
+        prefs.edit().clear().apply()
+    }
 }
