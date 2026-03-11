@@ -9,11 +9,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.deseos_navideos.features.deseos.presentation.viewmodel.WishesViewModel
-import com.example.deseos_navideos.features.deseos.domain.entities.Wish
+import com.example.deseos_navideos.features.deseos.presentation.components.AddCard
+import com.example.deseos_navideos.features.deseos.presentation.components.WishCard
 
 @Composable
-fun WishesScreen(viewModel: WishesViewModel) {
+fun WishesScreen(
+    viewModel: WishesViewModel = hiltViewModel()
+) {
+
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
@@ -21,40 +26,77 @@ fun WishesScreen(viewModel: WishesViewModel) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
             Card(
-                modifier = Modifier.weight(1f).height(120.dp), // más grande
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.error) // rojo
+                modifier = Modifier
+                    .weight(1f)
+                    .height(120.dp),
+
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
             ) {
+
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("${uiState.wishes.size}", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onError)
-                    Text("Deseos", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onError)
+
+                    Text(
+                        "${uiState.wishes.size}",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.onError
+                    )
+
+                    Text(
+                        "Deseos",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onError
+                    )
                 }
             }
+
             Spacer(modifier = Modifier.width(16.dp))
+
             Card(
-                modifier = Modifier.weight(1f).height(120.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.error)
+                modifier = Modifier
+                    .weight(1f)
+                    .height(120.dp),
+
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
             ) {
+
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("25 Dic", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onError)
-                    Text("Navidad", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onError)
+
+                    Text(
+                        "25 Dic",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.onError
+                    )
+
+                    Text(
+                        "Navidad",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onError
+                    )
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
+
         AddCard(viewModel)
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -68,21 +110,38 @@ fun WishesScreen(viewModel: WishesViewModel) {
         Spacer(modifier = Modifier.height(8.dp))
 
         when {
-            uiState.isLoading -> CircularProgressIndicator()
 
-            uiState.errorMessage != null && uiState.wishes.isEmpty() -> Text(
-                text = "Error: ${uiState.errorMessage}",
-                color = MaterialTheme.colorScheme.error
-            )
+            uiState.isLoading -> {
+                CircularProgressIndicator()
+            }
+
+            uiState.errorMessage != null -> {
+
+                Text(
+                    text = "Error: ${uiState.errorMessage}",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            uiState.wishes.isEmpty() -> {
+
+                Text(
+                    "Aún no has agregado ningún deseo. ¡Santa está esperando tu carta!"
+                )
+            }
 
             else -> {
-                if (uiState.wishes.isEmpty()) {
-                    Text("Aún no has agregado ningún deseo. ¡Santa está esperando tu carta!")
-                } else {
-                    LazyColumn {
-                        items(uiState.wishes) { wish ->
-                            WishCard(wish, onDelete = { viewModel.removeWish(wish.id) })
-                        }
+
+                LazyColumn {
+
+                    items(uiState.wishes) { wish ->
+
+                        WishCard(
+                            wish = wish,
+                            onDelete = {
+                                viewModel.removeWish(wish.id)
+                            }
+                        )
                     }
                 }
             }

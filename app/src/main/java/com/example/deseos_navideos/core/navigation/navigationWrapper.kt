@@ -16,10 +16,6 @@ import com.example.deseos_navideos.core.storage.DataStorage
 
 @Composable
 fun NavigationWrapper(
-    authViewModel: AuthViewModel,
-    wishesViewModel: WishesViewModel,
-    userViewModel: KidsViewModel,
-    dataStorage: DataStorage,
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
@@ -30,16 +26,16 @@ fun NavigationWrapper(
         modifier = modifier
     ) {
         composable("login") {
-            LoginScreen(viewModel = authViewModel, navController = navController, dataStorage = dataStorage)
+            LoginScreen(navController = navController)
         }
         composable("register") {
-            RegisterScreen(authViewModel, navController)
+            RegisterScreen(navController = navController)
         }
         composable("wishes") {
-            WishesScreen(wishesViewModel)
+            WishesScreen()
         }
         composable("users") {
-            KidsScreen(userViewModel)
+            KidsScreen()
         }
 
     }
