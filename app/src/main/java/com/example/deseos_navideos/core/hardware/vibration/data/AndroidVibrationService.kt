@@ -1,11 +1,11 @@
-package com.example.deseos_navideos.core.hardware.data
+package com.example.deseos_navideos.core.hardware.vibration.data
 
 import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import com.example.deseos_navideos.core.hardware.domain.VibrationService
+import com.example.deseos_navideos.core.hardware.vibration.domain.VibrationService
 
 class AndroidVibrationService(private val context: Context) : VibrationService {
     override fun vibrate(duration: Long) {
