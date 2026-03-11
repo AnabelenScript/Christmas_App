@@ -2,12 +2,6 @@ package com.example.deseos_navideos.features.usuarios.data.datasources.remote.mo
 
 import com.google.gson.annotations.SerializedName
 
-data class UsersResponse(
-    @SerializedName("family_code")
-    val familyCode: String,
-    val kids: List<KidDashboardDTO>
-)
-
 data class KidDashboardDTO(
     val id: Int,
     val username: String,

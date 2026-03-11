@@ -35,3 +35,7 @@ data class LoginRequestDto(
 data class RegisterResponseDto(
     val id: Int
 )
+
+data class LoginRes(
+    val user: UserDto
+)

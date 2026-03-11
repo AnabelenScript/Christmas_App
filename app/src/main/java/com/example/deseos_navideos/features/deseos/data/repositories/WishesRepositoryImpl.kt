@@ -1,6 +1,9 @@
 package com.example.deseos_navideos.features.deseos.data.repositories
 
 import android.util.Log
+import com.example.deseos_navideos.core.database.daos.WishDao
+import com.example.deseos_navideos.features.deseos.data.datasources.local.mapper.toDomain
+import com.example.deseos_navideos.features.deseos.data.datasources.local.mapper.toEntity
 import com.example.deseos_navideos.features.deseos.data.datasources.remote.api.WishesApi
 import com.example.deseos_navideos.features.deseos.data.datasources.remote.mapper.toDomain
 import com.example.deseos_navideos.features.deseos.data.datasources.remote.model.CreateWishDto
@@ -15,7 +18,8 @@ import java.io.File
 import javax.inject.Inject
 
 class WishesRepositoryImpl @Inject constructor(
-    private val api: WishesApi
+    private val api: WishesApi,
+    private val wishesDao: WishDao
 ) : WishesRepository {
 
     override suspend fun createWish(
@@ -37,13 +41,26 @@ class WishesRepositoryImpl @Inject constructor(
         role: String
     ): List<Wish> {
 
-        val response = api.getWishes(
-            userId,
-            role,
-            code
-        )
+        return try {
 
-        return response.wishes.map { it.toDomain() }
+            val response = api.getWishes(
+                userId,
+                role,
+                code
+            )
+
+            val wishes = response.wishes.map { it.toDomain() }
+
+            wishesDao.insertAll(
+                response.wishes.map { it.toEntity() }
+            )
+
+            wishes
+
+        } catch (e: Exception) {
+
+            wishesDao.getAll().map { it.toDomain() }
+        }
     }
 
     override suspend fun updateWish(
