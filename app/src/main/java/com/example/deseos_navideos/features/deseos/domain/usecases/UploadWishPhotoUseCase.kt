@@ -2,8 +2,9 @@ package com.example.deseos_navideos.features.deseos.domain.usecases
 
 import com.example.deseos_navideos.features.deseos.domain.repositories.WishesRepository
 import java.io.File
+import javax.inject.Inject
 
-class UploadWishPhotoUseCase(
+class UploadWishPhotoUseCase @Inject constructor(
     private val repo: WishesRepository
 ) {
 

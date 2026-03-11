@@ -1,8 +1,9 @@
 package com.example.deseos_navideos.features.deseos.domain.usecases
 
 import com.example.deseos_navideos.features.deseos.domain.repositories.WishesRepository
+import javax.inject.Inject
 
-class DeleteWishUseCase(
+class DeleteWishUseCase @Inject constructor(
     private val repo: WishesRepository
 ) {
 

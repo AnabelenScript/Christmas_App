@@ -1,8 +1,9 @@
 package com.example.deseos_navideos.features.usuarios.domain.usecases
 
 import com.example.deseos_navideos.features.usuarios.domain.repositories.UsersRepository
+import javax.inject.Inject
 
-class DeleteUserUseCase(
+class DeleteUserUseCase @Inject constructor(
     private val repo: UsersRepository
 ) {
 

@@ -2,8 +2,9 @@ package com.example.deseos_navideos.features.usuarios.domain.usecases
 
 import com.example.deseos_navideos.features.usuarios.domain.repositories.UsersRepository
 import java.io.File
+import javax.inject.Inject
 
-class UploadAudioUseCase(
+class UploadAudioUseCase @Inject constructor(
     private val repo: UsersRepository
 ) {
 

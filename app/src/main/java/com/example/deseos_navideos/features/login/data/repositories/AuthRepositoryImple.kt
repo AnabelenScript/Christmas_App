@@ -7,8 +7,9 @@ import com.example.deseos_navideos.features.login.data.datasources.model.LoginRe
 import com.example.deseos_navideos.features.login.data.datasources.model.RegisterUserDto
 import com.example.deseos_navideos.features.login.domain.entities.User
 import com.example.deseos_navideos.features.login.domain.repositories.AuthRepository
+import javax.inject.Inject
 
-class AuthRepositoryImpl(
+class AuthRepositoryImpl @Inject constructor (
     private val api: AuthApi
 ) : AuthRepository {
 

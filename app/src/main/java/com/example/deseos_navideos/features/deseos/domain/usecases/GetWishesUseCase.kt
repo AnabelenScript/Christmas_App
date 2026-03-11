@@ -2,8 +2,9 @@ package com.example.deseos_navideos.features.deseos.domain.usecases
 
 import com.example.deseos_navideos.features.deseos.domain.entities.Wish
 import com.example.deseos_navideos.features.deseos.domain.repositories.WishesRepository
+import javax.inject.Inject
 
-class GetWishesUseCase(
+class GetWishesUseCase @Inject constructor(
     private val repo: WishesRepository
 ) {
 

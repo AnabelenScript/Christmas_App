@@ -2,8 +2,9 @@ package com.example.deseos_navideos.features.usuarios.domain.usecases
 
 import com.example.deseos_navideos.features.login.domain.entities.User
 import com.example.deseos_navideos.features.usuarios.domain.repositories.UsersRepository
+import javax.inject.Inject
 
-class GetUserUseCase(
+class GetUserUseCase @Inject constructor(
     private val repo: UsersRepository
 ) {
 
