@@ -62,6 +62,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     implementation(libs.androidx.activity.compose)
+    implementation ("androidx.compose.ui:ui")
     implementation(platform(libs.androidx.compose.bom))
 
     implementation(libs.androidx.compose.ui)
@@ -78,6 +79,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization)
     implementation(libs.io.coil.kt.coil.compose)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.ui.text.google.fonts)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -102,6 +105,4 @@ dependencies {
     // Icons
     implementation(libs.androidx.compose.material.icons.extended)
 
-    // Google Fonts
-    implementation(libs.androidx.compose.ui.text.google.fonts)
 }
