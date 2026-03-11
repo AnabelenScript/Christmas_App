@@ -22,14 +22,14 @@ import com.example.deseos_navideos.features.login.presentation.components.Navide
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoTextField
 import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoModal
 import com.example.deseos_navideos.core.storage.DataStorage
 
 @Composable
 fun LoginScreen(
-    viewModel: AuthViewModel,
+    viewModel: AuthViewModel = hiltViewModel(),
     navController: NavController,
-    dataStorage: DataStorage,
 ) {
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()

@@ -2,80 +2,108 @@ package com.example.deseos_navideos.features.usuarios.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.deseos_navideos.core.storage.DataStorage
-import com.example.deseos_navideos.features.usuarios.domain.entities.Users
-import com.example.deseos_navideos.features.usuarios.domain.usecases.GetKids_UseCase
+import com.example.deseos_navideos.core.storage.UserSession
 import com.example.deseos_navideos.features.deseos.domain.entities.Wish
 import com.example.deseos_navideos.features.deseos.domain.usecases.GetWishesUseCase
+import com.example.deseos_navideos.features.usuarios.domain.entities.Kid
+
+import com.example.deseos_navideos.features.usuarios.domain.usecases.GetKidsUseCase
+import com.example.deseos_navideos.features.usuarios.presentation.screens.KidsUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okhttp3.internal.toImmutableMap
+import javax.inject.Inject
 
-class KidsViewModel(
-    private val getKidsUseCase: GetKids_UseCase,
-    private val getWishesUseCase: GetWishesUseCase,
-    private val dataStorage: DataStorage
+@HiltViewModel
+class KidsViewModel @Inject constructor(
+    private val getKidsUseCase: GetKidsUseCase,
+    private val getWishesUseCase: GetWishesUseCase
 ) : ViewModel() {
-    private val _kids = MutableStateFlow<List<Users>>(emptyList())
-    val kids: StateFlow<List<Users>> = _kids
-    private val _wishesByKid = MutableStateFlow<Map<Int, List<Wish>>>(emptyMap())
-    val wishesByKid: StateFlow<Map<Int, List<Wish>>> = _wishesByKid
 
-    private fun getUserId(): Int {
-        val loginRes = dataStorage.getLoginResponse()
-        return loginRes?.user?.id ?: 0
-    }
-
-    private fun getRole(): String {
-        val loginRes = dataStorage.getLoginResponse()
-        return loginRes?.user?.role ?: "guest"
-    }
-
-    private fun getFamilyCode(): String {
-        val loginRes = dataStorage.getLoginResponse()
-        return loginRes?.user?.familyCode ?: ""
-    }
+    private val _uiState = MutableStateFlow(KidsUiState())
+    val uiState: StateFlow<KidsUiState> = _uiState
 
     init {
         loadKids()
     }
 
     fun loadKids() {
-        val role = getRole()
-        val userId = getUserId()
-        val familyCode = getFamilyCode()
 
-        if (role != "parent") return
+        _uiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
-            val result = getKidsUseCase(familyCode, userId, role)
-            result.onSuccess { kidsList ->
-                _kids.value = kidsList
-                loadWishesForKids(kidsList, role)
-            }
-            result.onFailure {
-                _kids.value = emptyList()
-                _wishesByKid.value = emptyMap()
-            }
+
+            val family_code = UserSession.getFamilyCode()
+            val user_id = UserSession.getUserId()
+            val role = UserSession.getRole()
+
+            if(family_code == null || user_id == null || role == null) return@launch
+
+            val result = getKidsUseCase(family_code, user_id, role)
+
+            result.fold(
+
+                onSuccess = { kidsList ->
+
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            kids = kidsList
+                        )
+                    }
+
+                    loadWishesForKids(kidsList)
+                },
+
+                onFailure = { error ->
+
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.message
+                        )
+                    }
+                }
+            )
         }
     }
 
-    private fun loadWishesForKids(kidsList: List<Users>, role: String) {
+    private fun loadWishesForKids(kidsList: List<Kid>) {
+
         viewModelScope.launch {
+
             val wishesMap = mutableMapOf<Int, List<Wish>>()
+
             kidsList.forEach { kid ->
-                // For a parent viewing a kid's wishes, we might need the family code or the kid's ID
-                // The API GET /wishes/:code takes a code. If it's for a kid, it might be their family code.
-                // Assuming for now it needs a string identifier.
-                val result = getWishesUseCase(kid.id.toString(), kid.id, role)
-                result.onSuccess { wishes ->
-                    wishesMap[kid.id] = wishes
-                }
-                result.onFailure {
-                    wishesMap[kid.id] = emptyList()
-                }
+
+                val family_code = UserSession.getFamilyCode()
+                val user_id = UserSession.getUserId()
+                val role = UserSession.getRole()
+
+                if(family_code == null || user_id == null || role == null) return@launch
+
+                val result = getWishesUseCase(family_code, user_id, role)
+
+                result.fold(
+                    onSuccess = { wishes ->
+
+                        wishesMap[kid.id] =
+                            wishes.filter { it.idUser == kid.id }
+
+                    },
+                    onFailure = {
+
+                        wishesMap[kid.id] = emptyList()
+                    }
+                )
             }
-            _wishesByKid.value = wishesMap
+
+            _uiState.update {
+                it.copy(wishesByKid = wishesMap.toImmutableMap())
+            }
         }
     }
 }

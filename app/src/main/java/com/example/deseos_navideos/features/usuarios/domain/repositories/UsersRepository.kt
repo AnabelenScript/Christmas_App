@@ -1,21 +1,43 @@
 package com.example.deseos_navideos.features.usuarios.domain.repositories
 
-import com.example.deseos_navideos.features.usuarios.domain.entities.Users
+import com.example.deseos_navideos.features.login.domain.entities.User
+import com.example.deseos_navideos.features.usuarios.domain.entities.Kid
 import java.io.File
 
 interface UsersRepository {
-    suspend fun getKids(familyCode: String, user_id: Int, role: String): List<Users>
-    suspend fun getOneUser(id: Int, user_id: Int, role: String): Users
+
+    suspend fun getKids(
+        familyCode: String,
+        userId: Int,
+        role: String
+    ): List<Kid>
+
+    suspend fun getOneUser(
+        id: Int,
+        userId: Int,
+        role: String
+    ): User
+
     suspend fun updateUser(
         id: Int,
         username: String,
         age: Int,
         country: String,
         password: String,
-        user_id: Int,
+        userId: Int,
         role: String
     )
-    suspend fun deleteUser(id: Int, user_id: Int, role: String)
-    suspend fun updateGoodness(id: Int, user_id: Int, role: String)
-    suspend fun uploadAudio(id: Int, audioFile: File, user_id: Int, role: String): String
+
+    suspend fun deleteUser(
+        id: Int,
+        userId: Int,
+        role: String
+    )
+
+    suspend fun uploadAudio(
+        id: Int,
+        audioFile: File,
+        userId: Int,
+        role: String
+    ): String
 }
