@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.secrets.gradle)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.devtools.ksp)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -107,4 +109,10 @@ dependencies {
     // Icons
     implementation(libs.androidx.compose.material.icons.extended)
 
+    // Google Fonts
+    implementation(libs.androidx.compose.ui.text.google.fonts)
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
+    implementation("com.google.firebase:firebase-analytics")
 }

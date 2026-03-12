@@ -1,49 +1,39 @@
-package com.example.deseos_navideos.features.usuarios.data.datasources.remote.mapper
+package com.example.deseos_navideos.features.usuarios.data.datasources.local.mapper
 
+import com.example.deseos_navideos.core.database.entities.KidEntity
+import com.example.deseos_navideos.core.database.entities.WishEntity
 import com.example.deseos_navideos.features.deseos.domain.entities.Wish
-import com.example.deseos_navideos.features.usuarios.data.datasources.remote.model.KidDashboardDTO
 import com.example.deseos_navideos.features.usuarios.data.datasources.remote.model.KidDto
 import com.example.deseos_navideos.features.usuarios.data.datasources.remote.model.KidWishDto
 import com.example.deseos_navideos.features.usuarios.data.datasources.remote.model.WishDashboardDTO
-import com.example.deseos_navideos.features.usuarios.domain.entities.Kid
 
-
-fun KidDto.toDomain(): Kid {
-    return Kid(
+fun KidDto.toEntity(familyCode: String): KidEntity {
+    return KidEntity(
         id = id,
         username = username,
         audioUrl = audioUrl,
-        wishes = wishes.map { it.toDomain() }
+        familyCode = familyCode
     )
 }
 
-fun KidWishDto.toDomain(): Wish {
-    return Wish(
+fun WishDashboardDTO.toEntity(userId: Int): WishEntity {
+    return WishEntity(
         id = id,
         wish = thing,
-        idUser = 0,
+        idUser = userId,
         username = null,
         state = state,
         photoUrl = photoUrl
     )
 }
 
-fun WishDashboardDTO.toDomain(): Wish {
-    return Wish(
+fun KidWishDto.toEntity(userId: Int): WishEntity {
+    return WishEntity(
         id = id,
         wish = thing,
-        idUser = 0,
+        idUser = userId,
         username = null,
         state = state,
         photoUrl = photoUrl
-    )
-}
-
-fun KidDashboardDTO.toDomain(): Kid {
-    return Kid(
-        id = id,
-        username = username,
-        audioUrl = audioUrl,
-        wishes = wishes.map { it.toDomain() }
     )
 }
