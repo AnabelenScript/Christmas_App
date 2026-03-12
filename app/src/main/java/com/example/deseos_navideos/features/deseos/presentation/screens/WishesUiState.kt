@@ -5,5 +5,7 @@ data class WishesUiState(
     val isLoading: Boolean = false,
     val wishes: List<Wish> = emptyList(),
     val newWish: String = "",
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isRecording: Boolean = false,
+    val recordingDuration: Int = 0
 )
