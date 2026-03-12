@@ -32,7 +32,7 @@ fun NavigationWrapper(
             RegisterScreen(navController = navController)
         }
         composable("wishes") {
-            WishesScreen()
+            WishesScreen(navController = navController)
         }
         composable("users") {
             KidsScreen()
