@@ -227,6 +227,12 @@ fun WishesScreen(
         )
     }
 
+    if (uiState.showSuccessModal) {
+        SuccessDialog(
+            onDismiss = { viewModel.dismissSuccessModal() }
+        )
+    }
+
     if (showDetailDialog && selectedWish != null) {
         WishDetailDialog(
             wish = selectedWish!!,
@@ -248,6 +254,55 @@ fun WishesScreen(
                 capturedImageUri = null
             }
         )
+    }
+}
+
+@Composable
+fun SuccessDialog(onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(24.dp),
+            color = Color.White,
+            modifier = Modifier.fillMaxWidth().padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    tint = Color(0xFF2E7D32),
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "¡Deseo agregado!",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontFamily = bodyFontFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Tu deseo ha sido enviado a Santa correctamente.",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontFamily = bodyFontFamily,
+                        color = Color.Gray
+                    )
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("¡Genial!", fontFamily = bodyFontFamily)
+                }
+            }
+        }
     }
 }
 

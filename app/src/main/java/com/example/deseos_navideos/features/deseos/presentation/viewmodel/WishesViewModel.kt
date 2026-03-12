@@ -14,6 +14,7 @@ import com.example.deseos_navideos.features.usuarios.domain.usecases.UploadAudio
 import com.example.deseos_navideos.features.deseos.presentation.screens.WishesUiState
 import com.example.deseos_navideos.core.hardware.camara.domain.CamaraService
 import com.example.deseos_navideos.core.hardware.audio.domain.AudioService
+import com.example.deseos_navideos.core.hardware.vibration.domain.VibrationService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -33,7 +34,8 @@ class WishesViewModel @Inject constructor(
     private val uploadWishPhotoUseCase: UploadWishPhotoUseCase,
     private val uploadAudioUseCase: UploadAudioUseCase,
     private val camaraService: CamaraService,
-    private val audioService: AudioService
+    private val audioService: AudioService,
+    private val vibrationService: VibrationService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WishesUiState())
@@ -92,7 +94,8 @@ class WishesViewModel @Inject constructor(
             val result = createWishUseCase(wish, user_id, role)
             result.fold(
                 onSuccess = {
-                    _uiState.update { it.copy(newWish = "") }
+                    _uiState.update { it.copy(newWish = "", showSuccessModal = true) }
+                    vibrationService.vibrate(300)
                     loadWishes()
                 },
                 onFailure = { error ->
@@ -100,6 +103,10 @@ class WishesViewModel @Inject constructor(
                 }
             )
         }
+    }
+
+    fun dismissSuccessModal() {
+        _uiState.update { it.copy(showSuccessModal = false) }
     }
 
     fun editWish(id: Int, description: String) {
