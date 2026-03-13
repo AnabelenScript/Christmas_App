@@ -5,7 +5,7 @@ data class User(
     val username: String,
     val age: Int,
     val country: String?,
-    val goodKid: Int,
-    val isSanta: Int,
-    val password: String
+    val password: String,
+    val familyCode: String?,
+    val role: String
 )
