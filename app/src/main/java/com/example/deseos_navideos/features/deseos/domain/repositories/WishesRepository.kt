@@ -29,13 +29,6 @@ interface WishesRepository {
         role: String
     )
 
-    suspend fun updateWishState(
-        id: Int,
-        state: String,
-        userId: Int,
-        role: String
-    )
-
     suspend fun deleteWish(
         id: Int,
         userId: Int,

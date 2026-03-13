@@ -1,6 +1,7 @@
 package com.example.deseos_navideos.core.hardware.audio.data
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
 import com.example.deseos_navideos.core.hardware.audio.domain.AudioService
@@ -13,7 +14,9 @@ class AndroidAudioService @Inject constructor(
 ) : AudioService {
 
     private var mediaRecorder: MediaRecorder? = null
-    private var isRecording = false
+    private var mediaPlayer: MediaPlayer? = null
+    private var _isRecording = false
+    private var _isPlaying = false
 
     override fun startRecording(file: File) {
         mediaRecorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -29,17 +32,50 @@ class AndroidAudioService @Inject constructor(
             prepare()
             start()
         }
-        isRecording = true
+        _isRecording = true
     }
 
     override fun stopRecording() {
         mediaRecorder?.apply {
-            stop()
+            try {
+                stop()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             release()
         }
         mediaRecorder = null
-        isRecording = false
+        _isRecording = false
     }
 
-    override fun isRecording(): Boolean = isRecording
+    override fun isRecording(): Boolean = _isRecording
+
+    override fun playAudio(url: String) {
+        stopPlayback()
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(url)
+            prepareAsync()
+            setOnPreparedListener { 
+                start()
+                _isPlaying = true
+            }
+            setOnCompletionListener {
+                _isPlaying = false
+                stopPlayback()
+            }
+        }
+    }
+
+    override fun stopPlayback() {
+        mediaPlayer?.apply {
+            if (_isPlaying) {
+                stop()
+            }
+            release()
+        }
+        mediaPlayer = null
+        _isPlaying = false
+    }
+
+    override fun isPlaying(): Boolean = _isPlaying
 }

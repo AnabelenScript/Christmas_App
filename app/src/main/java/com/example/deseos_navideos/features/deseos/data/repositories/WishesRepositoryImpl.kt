@@ -123,21 +123,6 @@ class WishesRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun updateWishState(
-        id: Int,
-        state: String,
-        userId: Int,
-        role: String
-    ) {
-
-        api.updateWishState(
-            userId,
-            role,
-            id,
-            UpdateWishStateDto(state)
-        )
-    }
-
     override suspend fun deleteWish(
         id: Int,
         userId: Int,

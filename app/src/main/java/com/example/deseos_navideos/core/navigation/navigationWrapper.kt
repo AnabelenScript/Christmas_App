@@ -2,17 +2,16 @@ package com.example.deseos_navideos.core.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.deseos_navideos.features.login.presentation.screens.RegisterScreen
 import com.example.deseos_navideos.features.login.presentation.screens.LoginScreen
-import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthViewModel
 import com.example.deseos_navideos.features.deseos.presentation.screens.WishesScreen
-import com.example.deseos_navideos.features.deseos.presentation.viewmodel.WishesViewModel
 import com.example.deseos_navideos.features.usuarios.presentation.screens.KidsScreen
-import com.example.deseos_navideos.features.usuarios.presentation.viewmodel.KidsViewModel
-import com.example.deseos_navideos.core.storage.DataStorage
+import com.example.deseos_navideos.features.detalles.presentation.screens.KidDetailsScreen
 
 @Composable
 fun NavigationWrapper(
@@ -35,8 +34,22 @@ fun NavigationWrapper(
             WishesScreen(navController = navController)
         }
         composable("users") {
-            KidsScreen()
+            KidsScreen(
+                onKidClick = { kidId ->
+                    navController.navigate("kid_details/$kidId")
+                },
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                }
+            )
         }
-
+        composable(
+            route = "kid_details/{kidId}",
+            arguments = listOf(navArgument("kidId") { type = NavType.IntType })
+        ) {
+            KidDetailsScreen(navController = navController)
+        }
     }
 }

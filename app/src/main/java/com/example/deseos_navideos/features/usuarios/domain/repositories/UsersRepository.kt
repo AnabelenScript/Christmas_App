@@ -2,6 +2,7 @@ package com.example.deseos_navideos.features.usuarios.domain.repositories
 
 import com.example.deseos_navideos.features.login.domain.entities.User
 import com.example.deseos_navideos.features.usuarios.domain.entities.Kid
+import com.example.deseos_navideos.features.usuarios.domain.entities.FamilyDashboard
 import java.io.File
 
 interface UsersRepository {
@@ -10,7 +11,7 @@ interface UsersRepository {
         familyCode: String,
         userId: Int,
         role: String
-    ): List<Kid>
+    ): FamilyDashboard
 
     suspend fun getOneUser(
         id: Int,

@@ -13,27 +13,27 @@ fun KidDto.toDomain(): Kid {
         id = id,
         username = username,
         audioUrl = audioUrl,
-        wishes = wishes.map { it.toDomain() }
+        wishes = wishes.map { it.toDomain(id, username) }
     )
 }
 
-fun KidWishDto.toDomain(): Wish {
+fun KidWishDto.toDomain(idUser: Int, username: String): Wish {
     return Wish(
         id = id,
         wish = thing,
-        idUser = 0,
-        username = null,
+        idUser = idUser,
+        username = username,
         state = state,
         photoUrl = photoUrl
     )
 }
 
-fun WishDashboardDTO.toDomain(): Wish {
+fun WishDashboardDTO.toDomain(idUser: Int, username: String): Wish {
     return Wish(
         id = id,
         wish = thing,
-        idUser = 0,
-        username = null,
+        idUser = idUser,
+        username = username,
         state = state,
         photoUrl = photoUrl
     )
@@ -44,6 +44,6 @@ fun KidDashboardDTO.toDomain(): Kid {
         id = id,
         username = username,
         audioUrl = audioUrl,
-        wishes = wishes.map { it.toDomain() }
+        wishes = wishes.map { it.toDomain(id, username) }
     )
 }
