@@ -16,7 +16,16 @@ interface WishDao {
     suspend fun getAll(): List<WishEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWish(wish: WishEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(wishes: List<WishEntity>)
+
+    @Query("SELECT * FROM wishes WHERE syncState = 'PENDING'")
+    suspend fun getPendingWishes(): List<WishEntity>
+
+    @Query("UPDATE wishes SET syncState = 'SYNCED' WHERE id = :localId")
+    suspend fun markAsSynced(localId: Int)
 
     @Query("DELETE FROM wishes")
     suspend fun clear()

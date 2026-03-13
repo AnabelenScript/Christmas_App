@@ -11,6 +11,11 @@ interface WishesRepository {
         role: String
     )
 
+    suspend fun syncPendingWishes(
+        userId: Int,
+        role: String
+    )
+
     suspend fun getWishes(
         code: String,
         userId: Int,

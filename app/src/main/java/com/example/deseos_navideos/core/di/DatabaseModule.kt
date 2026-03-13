@@ -6,6 +6,7 @@ import com.example.deseos_navideos.core.database.AppDatabase
 import com.example.deseos_navideos.core.database.daos.KidsDao
 import com.example.deseos_navideos.core.database.daos.UserDao
 import com.example.deseos_navideos.core.database.daos.WishDao
+import com.example.deseos_navideos.core.database.migrations.MIGRATION_1_2
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +28,9 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "wishes_db"
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     @Provides
