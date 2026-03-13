@@ -15,6 +15,7 @@ import com.example.deseos_navideos.features.deseos.presentation.screens.WishesUi
 import com.example.deseos_navideos.core.hardware.camara.domain.CamaraService
 import com.example.deseos_navideos.core.hardware.audio.domain.AudioService
 import com.example.deseos_navideos.core.hardware.vibration.domain.VibrationService
+import com.example.deseos_navideos.features.deseos.domain.usecases.SyncPendingWishesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -35,7 +36,8 @@ class WishesViewModel @Inject constructor(
     private val uploadAudioUseCase: UploadAudioUseCase,
     private val camaraService: CamaraService,
     private val audioService: AudioService,
-    private val vibrationService: VibrationService
+    private val vibrationService: VibrationService,
+    private val syncPendingWishesUseCase: SyncPendingWishesUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WishesUiState())
@@ -45,6 +47,7 @@ class WishesViewModel @Inject constructor(
     private var currentAudioFile: File? = null
 
     init {
+        syncPending()
         loadWishes()
     }
 
@@ -221,6 +224,24 @@ class WishesViewModel @Inject constructor(
                     }
                 }
             )
+        }
+    }
+
+    private fun syncPending() {
+
+        val user_id = UserSession.getUserId()
+        val role = UserSession.getRole()
+
+        if(user_id == null || role == null) return
+
+        viewModelScope.launch {
+
+            syncPendingWishesUseCase(
+                user_id,
+                role
+            )
+
+            loadWishes()
         }
     }
 }

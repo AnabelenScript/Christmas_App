@@ -17,5 +17,7 @@ data class WishEntity(
 
     val state: String,
 
-    val photoUrl: String?
+    val photoUrl: String?,
+
+    val syncState: String, // PENDING, SYNCED
 )

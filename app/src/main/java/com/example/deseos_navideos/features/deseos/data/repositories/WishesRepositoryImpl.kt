@@ -2,6 +2,7 @@ package com.example.deseos_navideos.features.deseos.data.repositories
 
 import android.util.Log
 import com.example.deseos_navideos.core.database.daos.WishDao
+import com.example.deseos_navideos.core.database.entities.WishEntity
 import com.example.deseos_navideos.features.deseos.data.datasources.local.mapper.toDomain
 import com.example.deseos_navideos.features.deseos.data.datasources.local.mapper.toEntity
 import com.example.deseos_navideos.features.deseos.data.datasources.remote.api.WishesApi
@@ -28,11 +29,53 @@ class WishesRepositoryImpl @Inject constructor(
         role: String
     ) {
 
-        api.addWish(
-            userId,
-            role,
-            CreateWishDto(thing)
-        )
+        try {
+
+            api.addWish(
+                userId,
+                role,
+                CreateWishDto(thing)
+            )
+
+        } catch (e: Exception) {
+
+            val localWish = WishEntity(
+                id = 0,
+                wish = thing,
+                idUser = userId,
+                username = null,
+                state = "Pendiente",
+                photoUrl = null,
+                syncState = "PENDING"
+            )
+
+            wishesDao.insertWish(localWish)
+        }
+    }
+
+    override suspend fun syncPendingWishes(
+        userId: Int,
+        role: String
+    ) {
+
+        val pending = wishesDao.getPendingWishes()
+
+        pending.forEach { wish ->
+
+            try {
+
+                val response = api.addWish(
+                    userId,
+                    role,
+                    CreateWishDto(wish.wish)
+                )
+
+                wishesDao.markAsSynced(wish.id)
+
+            } catch (e: Exception) {
+                Log.d("SYNC_ERROR", "Error al sincronizar el deseo: ${e}")
+            }
+        }
     }
 
     override suspend fun getWishes(
@@ -50,6 +93,8 @@ class WishesRepositoryImpl @Inject constructor(
             )
 
             val wishes = response.wishes.map { it.toDomain() }
+
+            wishesDao.clear()
 
             wishesDao.insertAll(
                 response.wishes.map { it.toEntity() }
