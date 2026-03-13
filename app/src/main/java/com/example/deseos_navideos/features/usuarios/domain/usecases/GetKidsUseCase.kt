@@ -1,6 +1,6 @@
 package com.example.deseos_navideos.features.usuarios.domain.usecases
 
-import com.example.deseos_navideos.features.usuarios.domain.entities.Kid
+import com.example.deseos_navideos.features.usuarios.domain.entities.FamilyDashboard
 import com.example.deseos_navideos.features.usuarios.domain.repositories.UsersRepository
 import javax.inject.Inject
 
@@ -12,16 +12,13 @@ class GetKidsUseCase @Inject constructor(
         familyCode: String,
         user_id: Int,
         role: String
-    ): Result<List<Kid>> {
+    ): Result<FamilyDashboard> {
 
         return try {
 
-            val kids = repo.getKids(familyCode, user_id, role)
+            val dashboard = repo.getKids(familyCode, user_id, role)
 
-            if (kids.isEmpty())
-                Result.failure(Exception("No se encontraron niños"))
-            else
-                Result.success(kids)
+            Result.success(dashboard)
 
         } catch (e: Exception) {
 

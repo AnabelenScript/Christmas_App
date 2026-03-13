@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.deseos_navideos.features.deseos.domain.entities.Wish
-import com.example.deseos_navideos.core.theme.bodyFontFamily
+import com.example.deseos_navideos.core.theme.ui.bodyFontFamily
 
 @Composable
 fun WishCard(
@@ -40,7 +40,6 @@ fun WishCard(
                 .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Indicador lateral rojo
             Box(
                 modifier = Modifier
                     .width(4.dp)
@@ -56,19 +55,6 @@ fun WishCard(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Checkbox-like box
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .border(
-                            width = 1.dp,
-                            color = Color(0xFFE0E0E0),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {

@@ -1,6 +1,5 @@
 package com.example.deseos_navideos.features.usuarios.data.repository
 
-import android.util.Log
 import com.example.deseos_navideos.core.database.daos.KidsDao
 import com.example.deseos_navideos.core.database.daos.WishDao
 import com.example.deseos_navideos.features.deseos.data.datasources.local.mapper.toDomain
@@ -11,6 +10,7 @@ import com.example.deseos_navideos.features.usuarios.data.datasources.remote.api
 import com.example.deseos_navideos.features.usuarios.data.datasources.remote.mapper.toDomain
 import com.example.deseos_navideos.features.usuarios.data.datasources.remote.model.UpdateUserDto
 import com.example.deseos_navideos.features.usuarios.domain.entities.Kid
+import com.example.deseos_navideos.features.usuarios.domain.entities.FamilyDashboard
 import com.example.deseos_navideos.features.usuarios.domain.repositories.UsersRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -28,7 +28,7 @@ class UsersRepositoryImpl @Inject constructor(
         familyCode: String,
         userId: Int,
         role: String
-    ): List<Kid> {
+    ): FamilyDashboard {
 
         return try {
 
@@ -55,7 +55,10 @@ class UsersRepositoryImpl @Inject constructor(
 
             wishDao.insertAll(wishes)
 
-            kids
+            FamilyDashboard(
+                familyCode = response.familyCode,
+                kids = kids
+            )
 
         } catch (e: Exception) {
 
@@ -64,7 +67,7 @@ class UsersRepositoryImpl @Inject constructor(
 
             val wishes = wishDao.getAll()
 
-            kids.map { kid ->
+            val kidsList = kids.map { kid ->
 
                 val kidWishes = wishes
                     .filter { it.idUser == kid.id }
@@ -77,6 +80,11 @@ class UsersRepositoryImpl @Inject constructor(
                     wishes = kidWishes
                 )
             }
+            
+            FamilyDashboard(
+                familyCode = familyCode,
+                kids = kidsList
+            )
         }
     }
 

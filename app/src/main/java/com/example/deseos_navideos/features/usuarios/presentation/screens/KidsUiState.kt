@@ -7,5 +7,6 @@ data class KidsUiState(
     val isLoading: Boolean = false,
     val kids: List<Kid> = emptyList(),
     val wishesByKid: Map<Int, List<Wish>> = emptyMap(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val familyCode: String? = null
 )
