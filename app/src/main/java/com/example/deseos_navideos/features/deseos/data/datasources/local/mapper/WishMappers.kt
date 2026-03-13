@@ -11,7 +11,8 @@ fun WishDto.toEntity(): WishEntity {
         idUser = idUser,
         username = username,
         state = state,
-        photoUrl = photoUrl
+        photoUrl = photoUrl,
+        syncState = "SYNCED"
     )
 }
 

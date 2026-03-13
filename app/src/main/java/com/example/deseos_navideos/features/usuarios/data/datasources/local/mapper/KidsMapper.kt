@@ -16,16 +16,6 @@ fun KidDto.toEntity(familyCode: String): KidEntity {
     )
 }
 
-fun WishDashboardDTO.toEntity(userId: Int): WishEntity {
-    return WishEntity(
-        id = id,
-        wish = thing,
-        idUser = userId,
-        username = null,
-        state = state,
-        photoUrl = photoUrl
-    )
-}
 
 fun KidWishDto.toEntity(userId: Int): WishEntity {
     return WishEntity(
@@ -34,6 +24,7 @@ fun KidWishDto.toEntity(userId: Int): WishEntity {
         idUser = userId,
         username = null,
         state = state,
-        photoUrl = photoUrl
+        photoUrl = photoUrl,
+        syncState = "SYNCED"
     )
 }
