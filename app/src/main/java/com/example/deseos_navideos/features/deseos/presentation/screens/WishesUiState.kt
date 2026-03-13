@@ -7,5 +7,6 @@ data class WishesUiState(
     val newWish: String = "",
     val errorMessage: String? = null,
     val isRecording: Boolean = false,
-    val recordingDuration: Int = 0
+    val recordingDuration: Int = 0,
+    val showSuccessModal: Boolean = false
 )
