@@ -137,9 +137,7 @@ class AuthViewModel @Inject constructor(
                 country = _country.value,
                 password = _password.value,
                 role = _role.value,
-                familyCode =
-                    if (_role.value == "parent") null
-                    else _familyCode.value
+                familyCode = if (_familyCode.value.isBlank()) null else _familyCode.value
             )
 
             result.fold(
