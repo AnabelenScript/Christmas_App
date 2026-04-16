@@ -34,3 +34,8 @@ data class UpdateWishDto(
 data class UpdateWishStateDto(
     val state: String
 )
+
+data class CreateWishResponseDto(
+    val message: String,
+    val id: Int
+)
