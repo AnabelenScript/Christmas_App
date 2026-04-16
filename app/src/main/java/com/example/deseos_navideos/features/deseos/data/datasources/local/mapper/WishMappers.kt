@@ -25,6 +25,7 @@ fun WishEntity.toDomain(): Wish {
         idUser = idUser,
         username = username,
         state = state,
-        photoUrl = photoUrl
+        photoUrl = photoUrl,
+        localFilePath = localFilePath
     )
 }

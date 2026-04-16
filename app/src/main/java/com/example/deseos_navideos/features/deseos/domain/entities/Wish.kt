@@ -6,5 +6,6 @@ data class Wish(
     val idUser: Int?,
     val username: String?,
     val state: String,
-    val photoUrl: String?
+    val photoUrl: String?,
+    val localFilePath: String? = null
 )

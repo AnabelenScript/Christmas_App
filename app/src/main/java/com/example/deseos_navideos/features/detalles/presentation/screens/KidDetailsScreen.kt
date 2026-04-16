@@ -28,6 +28,7 @@ import coil.compose.AsyncImage
 import com.example.deseos_navideos.core.theme.ui.bodyFontFamily
 import com.example.deseos_navideos.features.detalles.presentation.viewmodel.KidDetailsViewModel
 import com.example.deseos_navideos.features.deseos.domain.entities.Wish
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +36,7 @@ fun KidDetailsScreen(
     navController: NavController,
     viewModel: KidDetailsViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var isPlaying by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.loadKidDetails()
@@ -53,7 +54,6 @@ fun KidDetailsScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         },
-
         containerColor = Color.White
     ) { padding ->
         Column(
@@ -75,9 +75,7 @@ fun KidDetailsScreen(
                 }
                 uiState.kid != null -> {
                     val kid = uiState.kid!!
-                    HorizontalDivider(thickness = 4.dp, color = Color(0xFFF1F3F4))
 
-                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = kid.username,
                         style = MaterialTheme.typography.headlineLarge.copy(
