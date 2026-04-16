@@ -81,7 +81,7 @@ class AuthViewModel @Inject constructor(
                         user = user
                     )
                     
-                    if (user.role == "padre") {
+                    if (user.role == "parent") {
                         SyncWorker.startPeriodicSync(context)
                     }
                     
