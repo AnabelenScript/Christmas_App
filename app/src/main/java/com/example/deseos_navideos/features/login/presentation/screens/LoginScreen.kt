@@ -23,7 +23,7 @@ import com.example.deseos_navideos.features.login.presentation.components.AuthLi
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoButton
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoTextField
 import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthViewModel
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoModal
 import com.example.deseos_navideos.features.login.presentation.components.HeaderCard
@@ -33,9 +33,9 @@ fun LoginScreen(
     viewModel: AuthViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    val username by viewModel.username.collectAsState()
-    val password by viewModel.password.collectAsState()
-    val uiState by viewModel.uiState.collectAsState()
+    val username by viewModel.username.collectAsStateWithLifecycle()
+    val password by viewModel.password.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var showErrorModal by remember { mutableStateOf(false) }
     if (uiState.errorMessage != null && showErrorModal) {

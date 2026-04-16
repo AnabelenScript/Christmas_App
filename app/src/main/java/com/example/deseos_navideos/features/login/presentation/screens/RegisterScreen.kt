@@ -22,7 +22,7 @@ import com.example.deseos_navideos.features.login.presentation.components.AuthLi
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoButton
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoTextField
 import com.example.deseos_navideos.features.login.presentation.viewmodel.AuthViewModel
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.deseos_navideos.features.login.presentation.components.NavideñoModal
 import com.example.deseos_navideos.features.login.presentation.components.RoleSelector
@@ -33,13 +33,13 @@ fun RegisterScreen(
     viewModel: AuthViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val username by viewModel.username.collectAsState()
-    val age by viewModel.age.collectAsState()
-    val country by viewModel.country.collectAsState()
-    val password by viewModel.password.collectAsState()
-    val role by viewModel.role.collectAsState()
-    val familyCode by viewModel.familyCode.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val username by viewModel.username.collectAsStateWithLifecycle()
+    val age by viewModel.age.collectAsStateWithLifecycle()
+    val country by viewModel.country.collectAsStateWithLifecycle()
+    val password by viewModel.password.collectAsStateWithLifecycle()
+    val role by viewModel.role.collectAsStateWithLifecycle()
+    val familyCode by viewModel.familyCode.collectAsStateWithLifecycle()
 
     var showErrorModal by remember { mutableStateOf(false) }
     var showFamilyCodeInput by remember { mutableStateOf(false) }

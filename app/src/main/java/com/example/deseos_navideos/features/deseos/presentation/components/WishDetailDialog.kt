@@ -30,7 +30,12 @@ fun WishDetailDialog(
     onUpdateWish: (String, Uri?) -> Unit
 ) {
     var editedDescription by remember { mutableStateOf(wish.wish) }
-    val currentPhoto = capturedImageUri ?: wish.photoUrl
+    
+    // Prioridad: 
+    // 1. Imagen recién capturada (Uri)
+    // 2. Imagen local guardada en DB (Path de la galería)
+    // 3. Imagen remota (URL del servidor)
+    val currentPhoto = capturedImageUri ?: wish.localFilePath ?: wish.photoUrl
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
