@@ -26,6 +26,7 @@ kotlinxSerialization = "1.6.3"
 # DI
 hilt = "2.59.2"
 hiltNavigationCompose = "1.3.0"
+hiltWork = "1.2.0"
 
 # Database
 room = "2.8.4"
@@ -42,6 +43,10 @@ espressoCore = "3.7.0"
 secretsGradle = "2.0.1"
 foundation = "1.10.4"
 uiText = "1.10.4"
+
+# Firebase & WorkManager
+firebaseMessaging = "24.1.0"
+workManager = "2.10.0"
 
 [libraries]
 
@@ -104,6 +109,8 @@ kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-seria
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWork" }
+androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltWork" }
 
 # -----------------------
 # ROOM (Database)
@@ -124,6 +131,13 @@ androidx-foundation = { group = "androidx.compose.foundation", name = "foundatio
 androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 # -----------------------
+# Firebase Messaging & WorkManager
+# -----------------------
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
+kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version = "1.7.3" }
+
+# -----------------------
 # PLUGINS
 # -----------------------
 
@@ -140,3 +154,5 @@ secrets-gradle = { id = "com.google.android.libraries.mapsplatform.secrets-gradl
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+# Play Services Coroutines

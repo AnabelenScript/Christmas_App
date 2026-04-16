@@ -12,7 +12,9 @@ fun WishDto.toEntity(): WishEntity {
         username = username,
         state = state,
         photoUrl = photoUrl,
-        syncState = "SYNCED"
+        syncState = "SYNCED",
+        taskType = "WISH",
+        role = "niño"
     )
 }
 

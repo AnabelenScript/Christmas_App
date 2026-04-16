@@ -9,10 +9,10 @@ import com.example.deseos_navideos.core.database.entities.WishEntity
 @Dao
 interface WishDao {
 
-    @Query("SELECT * FROM wishes WHERE idUser = :userId")
+    @Query("SELECT * FROM wishes WHERE idUser = :userId AND taskType = 'WISH'")
     suspend fun getWishesByUser(userId: Int): List<WishEntity>
 
-    @Query("SELECT * FROM wishes")
+    @Query("SELECT * FROM wishes WHERE taskType = 'WISH'")
     suspend fun getAll(): List<WishEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -22,10 +22,19 @@ interface WishDao {
     suspend fun insertAll(wishes: List<WishEntity>)
 
     @Query("SELECT * FROM wishes WHERE syncState = 'PENDING'")
-    suspend fun getPendingWishes(): List<WishEntity>
+    suspend fun getPendingTasks(): List<WishEntity>
 
-    @Query("UPDATE wishes SET syncState = 'SYNCED' WHERE id = :localId")
-    suspend fun markAsSynced(localId: Int)
+    @Query("UPDATE wishes SET syncState = 'SYNCED', id = :remoteId WHERE localId = :localId")
+    suspend fun markAsSynced(localId: Int, remoteId: Int)
+
+    @Query("DELETE FROM wishes WHERE localId = :localId")
+    suspend fun deleteByLocalId(localId: Int)
+
+    @Query("DELETE FROM wishes WHERE idUser = :userId AND taskType = 'WISH'")
+    suspend fun deleteWishesByUser(userId: Int)
+
+    @Query("DELETE FROM wishes WHERE idUser != :currentUserId AND syncState = 'SYNCED' AND taskType = 'WISH'")
+    suspend fun deleteOtherSyncedWishes(currentUserId: Int)
 
     @Query("DELETE FROM wishes")
     suspend fun clear()
