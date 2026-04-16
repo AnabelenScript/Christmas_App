@@ -41,4 +41,10 @@ interface UsersRepository {
         userId: Int,
         role: String
     ): String
+
+    suspend fun updateToken(
+        token: String,
+        userId: Int,
+        role: String
+    )
 }

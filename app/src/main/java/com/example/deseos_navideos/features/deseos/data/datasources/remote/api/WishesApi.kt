@@ -1,6 +1,7 @@
 package com.example.deseos_navideos.features.deseos.data.datasources.remote.api
 
 import com.example.deseos_navideos.features.deseos.data.datasources.remote.model.CreateWishDto
+import com.example.deseos_navideos.features.deseos.data.datasources.remote.model.CreateWishResponseDto
 import com.example.deseos_navideos.features.deseos.data.datasources.remote.model.UpdateWishDto
 import com.example.deseos_navideos.features.deseos.data.datasources.remote.model.UpdateWishStateDto
 import com.example.deseos_navideos.features.deseos.data.datasources.remote.model.WishesResponseDto
@@ -25,7 +26,7 @@ interface WishesApi {
         @Header("x-user-id") userId: Int,
         @Header("x-role") role: String,
         @Body request: CreateWishDto
-    ): MessageResponseDto
+    ): CreateWishResponseDto
 
 
     @GET("wishes/{code}")

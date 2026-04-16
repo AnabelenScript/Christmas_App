@@ -58,6 +58,10 @@ android {
     }
 }
 
+ksp {
+    arg("hilt.disableModulesHaveInstallInCheck", "true")
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -99,7 +103,9 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.work)
     ksp(libs.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
 
     // Room
     implementation(libs.room.runtime)
@@ -115,4 +121,11 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.firebase.messaging)
+
+    // WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
+
+    // Play Services Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 }
