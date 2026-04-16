@@ -47,7 +47,8 @@ class WishesRepositoryImpl @Inject constructor(
                     state = "Pendiente",
                     photoUrl = null,
                     syncState = "SYNCED",
-                    taskType = "WISH"
+                    taskType = "WISH",
+                    role = role
                 )
             )
         } catch (e: Exception) {
@@ -59,7 +60,8 @@ class WishesRepositoryImpl @Inject constructor(
                 state = "Pendiente",
                 photoUrl = null,
                 syncState = "PENDING",
-                taskType = "WISH"
+                taskType = "WISH",
+                role = role
             )
             wishesDao.insertWish(localWish)
             scheduleSync()
@@ -119,7 +121,8 @@ class WishesRepositoryImpl @Inject constructor(
                 photoUrl = null,
                 syncState = "PENDING",
                 localFilePath = photoFile.absolutePath,
-                taskType = "PHOTO"
+                taskType = "PHOTO",
+                role = role
             )
             wishesDao.insertWish(photoTask)
             scheduleSync()

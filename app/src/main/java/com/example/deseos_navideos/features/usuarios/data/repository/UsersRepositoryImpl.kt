@@ -172,7 +172,8 @@ class UsersRepositoryImpl @Inject constructor(
                 photoUrl = null,
                 syncState = "PENDING",
                 localFilePath = audioFile.absolutePath,
-                taskType = "AUDIO"
+                taskType = "AUDIO",
+                role = role
             )
             wishDao.insertWish(audioTask)
             scheduleSync()

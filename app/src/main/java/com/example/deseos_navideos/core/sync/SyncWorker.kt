@@ -46,7 +46,7 @@ class SyncWorker @AssistedInject constructor(
 
         pendingTasks.forEach { task ->
             try {
-                val role = task.role ?: "niño"
+                val role = task.role ?: "child"
                 when (task.taskType) {
                     "WISH" -> {
                         val response = wishesApi.addWish(
@@ -95,9 +95,8 @@ class SyncWorker @AssistedInject constructor(
 
         if (loginRes != null) {
             val user = loginRes.user
-            if (user.role == "padre") {
+            if (user.role == "parent") {
                 try {
-                    // This calls getFamilyDashboard, updates DB with kids and wishes
                     Log.d("SyncWorker", "Descargando actualizaciones de los hijos para el padre...")
                     usersRepository.getKids(
                         familyCode = user.familyCode ?: "",
@@ -108,30 +107,12 @@ class SyncWorker @AssistedInject constructor(
                 } catch (e: Exception) {
                     Log.e("SyncWorker", "Error descargando actualizaciones: ${e.message}")
                 }
-                
-                // Repetir el sync en 3 minutos solo si el usuario activo es un padre
-                scheduleNextSync()
-            } else if (user.role == "niño") {
+            } else if (user.role == "child") {
                 // Future expansion if needed
             }
         } else {
              Log.d("SyncWorker", "No hay usuario activo (DataStorage), se salta pullSync() ")
         }
-    }
-
-    private fun scheduleNextSync() {
-        Log.d("SyncWorker", "Programando próxima sincronización en 3 minutos...")
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-            
-        val nextSync = OneTimeWorkRequestBuilder<SyncWorker>()
-            .setInitialDelay(3, TimeUnit.MINUTES)
-            .setConstraints(constraints)
-            .build()
-            
-        WorkManager.getInstance(applicationContext)
-            .enqueueUniqueWork("parent_periodic_sync", ExistingWorkPolicy.REPLACE, nextSync)
     }
 
     companion object {
