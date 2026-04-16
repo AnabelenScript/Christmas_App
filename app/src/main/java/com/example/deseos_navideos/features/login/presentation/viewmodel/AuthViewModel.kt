@@ -7,11 +7,17 @@ import com.example.deseos_navideos.features.login.domain.usecases.LoginUseCase
 import com.example.deseos_navideos.features.login.domain.usecases.RegisterUseCase
 import com.example.deseos_navideos.features.login.domain.usecases.LogoutUseCase
 import com.example.deseos_navideos.features.login.presentation.screens.AuthUiState
+import com.example.deseos_navideos.features.usuarios.domain.repositories.UsersRepository
+import com.example.deseos_navideos.core.sync.SyncWorker
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -19,7 +25,9 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val usersRepository: UsersRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -72,6 +80,12 @@ class AuthViewModel @Inject constructor(
                         isLoading = false,
                         user = user
                     )
+                    
+                    if (user.role == "parent") {
+                        SyncWorker.startPeriodicSync(context)
+                    }
+                    
+                    registerFcmToken(user.id, user.role)
 
                 },
 
@@ -96,6 +110,18 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    private fun registerFcmToken(userId: Int, role: String) {
+        viewModelScope.launch {
+            try {
+                val token = FirebaseMessaging.getInstance().token.await()
+                usersRepository.updateToken(token, userId, role)
+                Log.d("AuthViewModel", "Token FCM registrado exitosamente")
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Error al registrar token FCM: ${e.message}")
+            }
+        }
+    }
+
     fun register() {
 
         _uiState.value = _uiState.value.copy(
@@ -111,9 +137,7 @@ class AuthViewModel @Inject constructor(
                 country = _country.value,
                 password = _password.value,
                 role = _role.value,
-                familyCode =
-                    if (_role.value == "parent") null
-                    else _familyCode.value
+                familyCode = if (_familyCode.value.isBlank()) null else _familyCode.value
             )
 
             result.fold(

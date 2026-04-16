@@ -12,7 +12,9 @@ fun WishDto.toEntity(): WishEntity {
         username = username,
         state = state,
         photoUrl = photoUrl,
-        syncState = "SYNCED"
+        syncState = "SYNCED",
+        taskType = "WISH",
+        role = "niño"
     )
 }
 
@@ -23,6 +25,7 @@ fun WishEntity.toDomain(): Wish {
         idUser = idUser,
         username = username,
         state = state,
-        photoUrl = photoUrl
+        photoUrl = photoUrl,
+        localFilePath = localFilePath
     )
 }

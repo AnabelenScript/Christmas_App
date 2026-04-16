@@ -15,7 +15,7 @@ import com.example.deseos_navideos.core.database.entities.WishEntity
         KidEntity::class,
         UserEntity::class
     ],
-    version = 2
+    version = 3
 )
 abstract class AppDatabase : RoomDatabase() {
 

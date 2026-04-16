@@ -11,6 +11,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -59,4 +60,11 @@ interface UsersApi {
         @Path("id") id: Int,
         @Part audio: MultipartBody.Part
     ): UploadResponseDto
+
+    @PATCH("users/")
+    suspend fun updateToken(
+        @Header("x-user-id") userId: Int,
+        @Header("x-role") role: String,
+        @Body request: Map<String, String>
+    ): MessageResponseDto
 }

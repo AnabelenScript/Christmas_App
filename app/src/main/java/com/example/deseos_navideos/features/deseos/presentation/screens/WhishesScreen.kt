@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.deseos_navideos.features.deseos.presentation.viewmodel.WishesViewModel
 import com.example.deseos_navideos.features.deseos.presentation.components.*
@@ -33,8 +33,8 @@ fun WishesScreen(
     viewModel: WishesViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val username by UserSession.username.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val username by UserSession.username.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     val totalWishes = uiState.wishes.size
@@ -150,7 +150,7 @@ fun WishesScreen(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E7D32),
+                        containerColor = Color(0xFFD32F2F),
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(12.dp),

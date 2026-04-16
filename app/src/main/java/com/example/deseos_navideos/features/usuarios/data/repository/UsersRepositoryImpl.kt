@@ -1,7 +1,9 @@
 package com.example.deseos_navideos.features.usuarios.data.repository
 
+import android.content.Context
 import com.example.deseos_navideos.core.database.daos.KidsDao
 import com.example.deseos_navideos.core.database.daos.WishDao
+import com.example.deseos_navideos.core.database.entities.WishEntity
 import com.example.deseos_navideos.features.deseos.data.datasources.local.mapper.toDomain
 import com.example.deseos_navideos.features.login.data.datasources.mapper.toDomain
 import com.example.deseos_navideos.features.login.domain.entities.User
@@ -12,6 +14,12 @@ import com.example.deseos_navideos.features.usuarios.data.datasources.remote.mod
 import com.example.deseos_navideos.features.usuarios.domain.entities.Kid
 import com.example.deseos_navideos.features.usuarios.domain.entities.FamilyDashboard
 import com.example.deseos_navideos.features.usuarios.domain.repositories.UsersRepository
+import com.example.deseos_navideos.core.sync.SyncWorker
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -21,7 +29,8 @@ import javax.inject.Inject
 class UsersRepositoryImpl @Inject constructor(
     private val api: UsersApi,
     private val kidDao: KidsDao,
-    private val wishDao: WishDao
+    private val wishDao: WishDao,
+    @ApplicationContext private val context: Context
 ) : UsersRepository {
 
     override suspend fun getKids(
@@ -40,13 +49,16 @@ class UsersRepositoryImpl @Inject constructor(
 
             val kids = response.kids.map { it.toDomain() }
 
-            // Guardar kids
             kidDao.clear()
             kidDao.insertKids(
                 response.kids.map { it.toEntity(familyCode) }
             )
 
-            // Guardar deseos
+            // Borrar los antiguos
+            response.kids.forEach { kid ->
+                wishDao.deleteWishesByUser(kid.id)
+            }
+            
             val wishes = response.kids.flatMap { kid ->
                 kid.wishes.map { wish ->
                     wish.toEntity(kid.id)
@@ -62,7 +74,6 @@ class UsersRepositoryImpl @Inject constructor(
 
         } catch (e: Exception) {
 
-            // Leer desde Room
             val kids = kidDao.getKids()
 
             val wishes = wishDao.getAll()
@@ -146,23 +157,47 @@ class UsersRepositoryImpl @Inject constructor(
         role: String
     ): String {
 
-        val requestFile =
-            audioFile.asRequestBody("audio/mpeg".toMediaTypeOrNull())
-
-        val body =
-            MultipartBody.Part.createFormData(
-                "audio",
-                audioFile.name,
-                requestFile
+        return try {
+            val requestFile = audioFile.asRequestBody("audio/mpeg".toMediaTypeOrNull())
+            val body = MultipartBody.Part.createFormData("audio", audioFile.name, requestFile)
+            val response = api.uploadAudio(userId, role, id, body)
+            response.url
+        } catch (e: Exception) {
+            val audioTask = WishEntity(
+                id = id,
+                wish = "",
+                idUser = id,
+                username = null,
+                state = "",
+                photoUrl = null,
+                syncState = "PENDING",
+                localFilePath = audioFile.absolutePath,
+                taskType = "AUDIO",
+                role = role
             )
+            wishDao.insertWish(audioTask)
+            scheduleSync()
+            ""
+        }
+    }
 
-        val response = api.uploadAudio(
-            userId,
-            role,
-            id,
-            body
-        )
+    override suspend fun updateToken(token: String, userId: Int, role: String) {
+        try {
+            api.updateToken(userId, role, mapOf("token" to token))
+        } catch (e: Exception) {
+            // Log error
+        }
+    }
 
-        return response.url
+    private fun scheduleSync() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val syncRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(context).enqueue(syncRequest)
     }
 }

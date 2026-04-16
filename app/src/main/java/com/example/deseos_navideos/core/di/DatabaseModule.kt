@@ -7,6 +7,7 @@ import com.example.deseos_navideos.core.database.daos.KidsDao
 import com.example.deseos_navideos.core.database.daos.UserDao
 import com.example.deseos_navideos.core.database.daos.WishDao
 import com.example.deseos_navideos.core.database.migrations.MIGRATION_1_2
+import com.example.deseos_navideos.core.database.migrations.MIGRATION_2_3
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,7 +30,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "wishes_db"
         )
-            .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_2_3)
             .build()
     }
 

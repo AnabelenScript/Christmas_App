@@ -25,6 +25,8 @@ fun KidWishDto.toEntity(userId: Int): WishEntity {
         username = null,
         state = state,
         photoUrl = photoUrl,
-        syncState = "SYNCED"
+        syncState = "SYNCED",
+        taskType = "WISH",
+        role = "niño"
     )
 }
