@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,12 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.deseos_navideos.core.storage.UserSession
 import com.example.deseos_navideos.core.theme.ui.bodyFontFamily
 import com.example.deseos_navideos.features.usuarios.presentation.viewmodel.KidsViewModel
 
 @Composable
 fun KidsScreen(
+    navController: NavController,
     onKidClick: (Int) -> Unit,
     onLogout: () -> Unit,
     viewModel: KidsViewModel = hiltViewModel()
@@ -43,9 +46,7 @@ fun KidsScreen(
 
     val allWishes = uiState.kids.flatMap { it.wishes }
     val totalWishes = allWishes.size
-    
-    // CORRECCIÓN: Usar minúsculas para comparar el estado
-    val completedWishes = allWishes.count { 
+    val completedWishes = allWishes.count {
         it.state.lowercase() in listOf("completed", "cumplido", "comprado")
     }
     val pendingWishes = totalWishes - completedWishes
@@ -80,19 +81,39 @@ fun KidsScreen(
                 )
             }
 
-            Button(
-                onClick = {
-                    UserSession.logout()
-                    onLogout()
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF2E7D32),
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.height(40.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("salir", fontFamily = bodyFontFamily)
+                IconButton(
+                    onClick = { navController.navigate("notifications") },
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = Color(0xFF2E7D32),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = "Notificaciones",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        UserSession.logout()
+                        onLogout()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFD32F2F),
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.height(40.dp)
+                ) {
+                    Text("salir", fontFamily = bodyFontFamily)
+                }
             }
         }
 

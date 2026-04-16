@@ -150,7 +150,7 @@ fun WishesScreen(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E7D32),
+                        containerColor = Color(0xFFD32F2F),
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(12.dp),

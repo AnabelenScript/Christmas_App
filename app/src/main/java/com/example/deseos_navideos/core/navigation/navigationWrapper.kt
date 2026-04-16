@@ -12,6 +12,7 @@ import com.example.deseos_navideos.features.login.presentation.screens.LoginScre
 import com.example.deseos_navideos.features.deseos.presentation.screens.WishesScreen
 import com.example.deseos_navideos.features.usuarios.presentation.screens.KidsScreen
 import com.example.deseos_navideos.features.detalles.presentation.screens.KidDetailsScreen
+import com.example.deseos_navideos.features.notificaciones.presentation.screens.NotificationsScreen
 
 @Composable
 fun NavigationWrapper(
@@ -35,6 +36,7 @@ fun NavigationWrapper(
         }
         composable("users") {
             KidsScreen(
+                navController = navController,
                 onKidClick = { kidId ->
                     navController.navigate("kid_details/$kidId")
                 },
@@ -50,6 +52,9 @@ fun NavigationWrapper(
             arguments = listOf(navArgument("kidId") { type = NavType.IntType })
         ) {
             KidDetailsScreen(navController = navController)
+        }
+        composable("notifications") {
+            NotificationsScreen(navController = navController)
         }
     }
 }

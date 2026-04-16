@@ -53,6 +53,7 @@ fun KidDetailsScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         },
+
         containerColor = Color.White
     ) { padding ->
         Column(
@@ -74,7 +75,9 @@ fun KidDetailsScreen(
                 }
                 uiState.kid != null -> {
                     val kid = uiState.kid!!
-                    
+                    HorizontalDivider(thickness = 4.dp, color = Color(0xFFF1F3F4))
+
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = kid.username,
                         style = MaterialTheme.typography.headlineLarge.copy(

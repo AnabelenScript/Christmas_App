@@ -42,6 +42,7 @@ fun RegisterScreen(
     val familyCode by viewModel.familyCode.collectAsState()
 
     var showErrorModal by remember { mutableStateOf(false) }
+    var showFamilyCodeInput by remember { mutableStateOf(false) }
 
     if (uiState.errorMessage != null && showErrorModal) {
         NavideñoModal(
@@ -113,7 +114,10 @@ fun RegisterScreen(
 
                     RoleSelector(
                         selectedRole = role,
-                        onRoleChange = { viewModel.onRoleChange(it) }
+                        onRoleChange = { 
+                            viewModel.onRoleChange(it)
+                            if (it == "child") showFamilyCodeInput = false
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -160,6 +164,24 @@ fun RegisterScreen(
                             label = "Código de Santa",
                             placeholder = "Ingresa el código"
                         )
+                    } else if (role == "parent") {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        if (!showFamilyCodeInput) {
+                            TextButton(onClick = { showFamilyCodeInput = true }) {
+                                Text(
+                                    "Ya tengo un código de familia",
+                                    color = Color(0xFF2E7D32),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        } else {
+                            NavideñoTextField(
+                                value = familyCode,
+                                onValueChange = { viewModel.onFamilyCodeChange(it) },
+                                label = "Código de Familia",
+                                placeholder = "Ingresa el código"
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
